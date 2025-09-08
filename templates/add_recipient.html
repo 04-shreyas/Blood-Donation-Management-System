@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}Add Recipient - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-person-heart text-success me-2"></i>
+                    Add New Recipient
+                </h1>
+                <p class="text-muted">Register a new blood recipient in the system</p>
+            </div>
+            <a href="{{ url_for('view_recipients') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Recipients
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person-badge text-secondary me-2"></i>
+                    Recipient Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-3">
+                        <!-- Name -->
+                        <div class="col-md-6">
+                            <label for="{{ form.name.id }}" class="form-label">
+                                <i class="bi bi-person text-muted me-2"></i>Full Name *
+                            </label>
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="Enter full name") }}
+                            {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Age -->
+                        <div class="col-md-6">
+                            <label for="{{ form.age.id }}" class="form-label">
+                                <i class="bi bi-calendar text-muted me-2"></i>Age *
+                            </label>
+                            {{ form.age(class="form-control" + (" is-invalid" if form.age.errors else ""), placeholder="Enter age") }}
+                            {% if form.age.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.age.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Gender -->
+                        <div class="col-md-6">
+                            <label for="{{ form.gender.id }}" class="form-label">
+                                <i class="bi bi-gender-ambiguous text-muted me-2"></i>Gender *
+                            </label>
+                            {{ form.gender(class="form-select" + (" is-invalid" if form.gender.errors else "")) }}
+                            {% if form.gender.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.gender.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Blood Group -->
+                        <div class="col-md-6">
+                            <label for="{{ form.blood_group.id }}" class="form-label">
+                                <i class="bi bi-heart-pulse text-muted me-2"></i>Blood Group *
+                            </label>
+                            {{ form.blood_group(class="form-select" + (" is-invalid" if form.blood_group.errors else "")) }}
+                            {% if form.blood_group.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.blood_group.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Phone -->
+                        <div class="col-md-6">
+                            <label for="{{ form.phone.id }}" class="form-label">
+                                <i class="bi bi-telephone text-muted me-2"></i>Phone Number *
+                            </label>
+                            {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), placeholder="Enter phone number") }}
+                            {% if form.phone.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label for="{{ form.email.id }}" class="form-label">
+                                <i class="bi bi-envelope text-muted me-2"></i>Email Address *
+                            </label>
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="Enter email address") }}
+                            {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Request Status -->
+                        <div class="col-md-6">
+                            <label for="{{ form.request_status.id }}" class="form-label">
+                                <i class="bi bi-clipboard-check text-muted me-2"></i>Request Status *
+                            </label>
+                            {{ form.request_status(class="form-select" + (" is-invalid" if form.request_status.errors else "")) }}
+                            {% if form.request_status.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.request_status.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Address -->
+                        <div class="col-12">
+                            <label for="{{ form.address.id }}" class="form-label">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>Address *
+                            </label>
+                            {{ form.address(class="form-control" + (" is-invalid" if form.address.errors else ""), rows="3", placeholder="Enter complete address") }}
+                            {% if form.address.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.address.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Reset Form
+                                </button>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check-circle me-2"></i>Add Recipient
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Help Information -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-info-circle text-info me-2"></i>
+                    Important Notes
+                </h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="bi bi-check text-success me-2"></i>
+                        Recipients can be of any age (including children)
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check text-success me-2"></i>
+                        All fields marked with * are required
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check text-success me-2"></i>
+                        Email address must be unique in the system
+                    </li>
+                    <li class="mb-0">
+                        <i class="bi bi-check text-success me-2"></i>
+                        Request status can be updated later as needed
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Auto-save draft functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Load saved draft
+    inputs.forEach(input => {
+        const saved = localStorage.getItem(`recipient_draft_${input.name}`);
+        if (saved && input.type !== 'submit' && input.type !== 'reset') {
+            input.value = saved;
+        }
+    });
+    
+    // Save draft on input change
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.type !== 'submit' && this.type !== 'reset') {
+                localStorage.setItem(`recipient_draft_${this.name}`, this.value);
+            }
+        });
+    });
+    
+    // Clear draft on successful submission
+    form.addEventListener('submit', function() {
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'reset') {
+                localStorage.removeItem(`recipient_draft_${input.name}`);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Blood Request - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-pencil-square text-warning me-2"></i>
+                    Edit Blood Request
+                </h1>
+                <p class="text-muted">Update blood request status and information</p>
+            </div>
+            <a href="{{ url_for('view_requests') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Requests
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clipboard-pulse text-secondary me-2"></i>
+                    Request Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="row g-3">
+                        <!-- Recipient Information (Read-only) -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="bi bi-person-heart text-muted me-2"></i>Recipient
+                            </label>
+                            <input type="text" class="form-control" value="{{ request_data.recipient.name if request_data.recipient else 'Unknown' }}" readonly>
+                            <small class="form-text text-muted">Recipient cannot be changed</small>
+                        </div>
+                        
+                        <!-- Blood Group (Read-only) -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="bi bi-heart-pulse text-muted me-2"></i>Blood Group
+                            </label>
+                            <input type="text" class="form-control" value="{{ request_data.blood_group }}" readonly>
+                            <small class="form-text text-muted">Blood group cannot be changed</small>
+                        </div>
+                        
+                        <!-- Quantity Needed (Read-only) -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="bi bi-droplet text-muted me-2"></i>Quantity Needed
+                            </label>
+                            <input type="text" class="form-control" value="{{ request_data.quantity_needed_ml }} ml" readonly>
+                            <small class="form-text text-muted">Quantity cannot be changed</small>
+                        </div>
+                        
+                        <!-- Request Status -->
+                        <div class="col-md-6">
+                            <label for="status" class="form-label">
+                                <i class="bi bi-clipboard-check text-muted me-2"></i>Request Status *
+                            </label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="Pending" {% if request_data.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Approved" {% if request_data.status == 'Approved' %}selected{% endif %}>Approved</option>
+                                <option value="Completed" {% if request_data.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Cancelled" {% if request_data.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a status.
+                            </div>
+                        </div>
+                        
+                        <!-- Priority Level -->
+                        <div class="col-md-6">
+                            <label for="priority" class="form-label">
+                                <i class="bi bi-exclamation-triangle text-muted me-2"></i>Priority Level
+                            </label>
+                            <select name="priority" id="priority" class="form-select">
+                                <option value="Low" {% if request_data.priority == 'Low' %}selected{% endif %}>Low - Routine</option>
+                                <option value="Medium" {% if request_data.priority == 'Medium' %}selected{% endif %}>Medium - Standard</option>
+                                <option value="High" {% if request_data.priority == 'High' %}selected{% endif %}>High - Urgent</option>
+                                <option value="Critical" {% if request_data.priority == 'Critical' %}selected{% endif %}>Critical - Emergency</option>
+                            </select>
+                            <small class="form-text text-muted">Update urgency level if needed</small>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <label for="notes" class="form-label">
+                                <i class="bi bi-chat-text text-muted me-2"></i>Additional Notes
+                            </label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Any additional information about this request...">{{ request_data.notes or '' }}</textarea>
+                            <small class="form-text text-muted">Optional: Include status change reasons, medical notes, etc.</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('view_requests') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-check-circle me-2"></i>Update Request
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Request Summary -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-info-circle text-info me-2"></i>
+                    Request Summary
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong>Request ID:</strong> 
+                            <span class="badge bg-secondary">{{ request_data.request_id }}</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>Created:</strong> 
+                            <small class="text-muted">{{ request_data.created_at.strftime('%B %d, %Y at %I:%M %p') if request_data.created_at else 'N/A' }}</small>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Recipient ID:</strong> 
+                            <span class="badge bg-primary">{{ request_data.recipient_id }}</span>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong>Current Status:</strong> 
+                            {% if request_data.status == 'Pending' %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% elif request_data.status == 'Approved' %}
+                                <span class="badge bg-info">Approved</span>
+                            {% elif request_data.status == 'Completed' %}
+                                <span class="badge bg-success">Completed</span>
+                            {% elif request_data.status == 'Cancelled' %}
+                                <span class="badge bg-secondary">Cancelled</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ request_data.status }}</span>
+                            {% endif %}
+                        </p>
+                        <p class="mb-2">
+                            <strong>Blood Group:</strong> 
+                            <span class="badge bg-danger">{{ request_data.blood_group }}</span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Quantity:</strong> 
+                            <span class="badge bg-info">{{ request_data.quantity_needed_ml }} ml</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Status Change Guidelines -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-lightbulb text-warning me-2"></i>
+                    Status Change Guidelines
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-warning">Pending → Approved</h6>
+                        <ul class="list-unstyled mb-3">
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Blood is available in inventory
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Recipient is ready for transfusion
+                            </li>
+                            <li class="mb-0">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Medical approval received
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">Approved → Completed</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Blood has been transfused
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Inventory has been updated
+                            </li>
+                            <li class="mb-0">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Request fulfilled successfully
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Status change confirmation
+document.addEventListener('DOMContentLoaded', function() {
+    const statusSelect = document.getElementById('status');
+    const currentStatus = '{{ request_data.status }}';
+    
+    statusSelect.addEventListener('change', function() {
+        const newStatus = this.value;
+        const oldStatus = currentStatus;
+        
+        if (newStatus !== oldStatus) {
+            let message = `Are you sure you want to change the status from "${oldStatus}" to "${newStatus}"?`;
+            
+            if (newStatus === 'Completed' && oldStatus !== 'Approved') {
+                message += '\n\nNote: Status should be "Approved" before marking as "Completed".';
+            }
+            
+            if (newStatus === 'Cancelled') {
+                message += '\n\nThis action cannot be undone.';
+            }
+            
+            if (!confirm(message)) {
+                this.value = oldStatus;
+            }
+        }
+    });
+    
+    // Auto-save draft functionality
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Load saved draft
+    inputs.forEach(input => {
+        const saved = localStorage.getItem(`request_edit_draft_${input.name}`);
+        if (saved && input.type !== 'submit' && input.type !== 'reset') {
+            input.value = saved;
+        }
+    });
+    
+    // Save draft on input change
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.type !== 'submit' && this.type !== 'reset') {
+                localStorage.setItem(`request_edit_draft_${this.name}`, this.value);
+            }
+        });
+    });
+    
+    // Clear draft on successful submission
+    form.addEventListener('submit', function() {
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'reset') {
+                localStorage.removeItem(`request_edit_draft_${input.name}`);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

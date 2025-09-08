@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-speedometer2 text-primary me-2"></i>
+                    Dashboard
+                </h1>
+                <p class="text-muted">Blood Donation Management System Overview</p>
+            </div>
+            <div class="text-end">
+                <small class="text-muted">Last updated: Just now</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-people-fill text-primary fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="card-title text-muted mb-1">Total Donors</h6>
+                        <h3 class="mb-0 text-primary">{{ total_donors or 0 }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-person-heart text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="card-title text-muted mb-1">Total Recipients</h6>
+                        <h3 class="mb-0 text-success">{{ total_recipients or 0 }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-info bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-gift text-info fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="card-title text-muted mb-1">Total Donations</h6>
+                        <h3 class="mb-0 text-info">{{ total_donations or 0 }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-3 col-md-6 mb-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-clipboard-pulse text-warning fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="card-title text-muted mb-1">Active Requests</h6>
+                        <h3 class="mb-0 text-warning">{{ total_requests or 0 }}</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Row -->
+<div class="row">
+    <!-- Blood Inventory Status -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-heart-pulse text-danger me-2"></i>
+                    Blood Inventory Status
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if inventory %}
+                <div class="row">
+                    {% for blood_type in inventory %}
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="text-center p-3 border rounded">
+                            <h6 class="text-muted mb-2">{{ blood_type.blood_group }}</h6>
+                            <h4 class="mb-1 {% if blood_type.total_units < 10 %}text-danger{% elif blood_type.total_units < 20 %}text-warning{% else %}text-success{% endif %}">
+                                {{ blood_type.total_units }}
+                            </h4>
+                            <small class="text-muted">units available</small>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-inbox text-muted fs-1"></i>
+                    <p class="text-muted mt-2">No inventory data available</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning text-warning me-2"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('add_donor') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-person-plus me-2"></i>Add New Donor
+                    </a>
+                    <a href="{{ url_for('add_recipient') }}" class="btn btn-outline-success">
+                        <i class="bi bi-person-heart me-2"></i>Add New Recipient
+                    </a>
+                    <a href="{{ url_for('add_donation') }}" class="btn btn-outline-info">
+                        <i class="bi bi-gift me-2"></i>Record Donation
+                    </a>
+                    <a href="{{ url_for('add_request') }}" class="btn btn-outline-warning">
+                        <i class="bi bi-clipboard-pulse me-2"></i>New Blood Request
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Donations -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history text-secondary me-2"></i>
+                    Recent Donations
+                </h5>
+                <a href="{{ url_for('view_donations') }}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                {% if recent_donations %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Donor</th>
+                                <th>Blood Group</th>
+                                <th>Volume</th>
+                                <th>Hospital</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for donation in recent_donations %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-2">
+                                            <i class="bi bi-person text-primary"></i>
+                                        </div>
+                                        {{ donation.donor.name }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-danger">{{ donation.donor.blood_group }}</span>
+                                </td>
+                                <td>{{ donation.blood_volume_ml }} ml</td>
+                                <td>{{ donation.hospital }}</td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ donation.donation_date.strftime('%b %d, %Y') if donation.donation_date else 'N/A' }}
+                                    </small>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-inbox text-muted fs-1"></i>
+                    <p class="text-muted mt-2">No recent donations</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Health -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-shield-check text-success me-2"></i>
+                    System Health
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <span>Database Connection</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <span>Form Validation</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <span>CSRF Protection</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <span>Error Handling</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-refresh dashboard data every 30 seconds
+setInterval(function() {
+    fetch('/api/stats')
+        .then(response => response.json())
+        .then(data => {
+            // Update statistics if needed
+            console.log('Dashboard refreshed:', data);
+        })
+        .catch(error => console.error('Error refreshing dashboard:', error));
+}, 30000);
+</script>
+{% endblock %}

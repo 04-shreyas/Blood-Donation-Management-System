@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Donor - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-pencil-square text-primary me-2"></i>
+                    Edit Donor
+                </h1>
+                <p class="text-muted">Update donor information</p>
+            </div>
+            <a href="{{ url_for('view_donors') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Donors
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person-badge text-secondary me-2"></i>
+                    Donor Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-3">
+                        <!-- Name -->
+                        <div class="col-md-6">
+                            <label for="{{ form.name.id }}" class="form-label">
+                                <i class="bi bi-person text-muted me-2"></i>Full Name *
+                            </label>
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else ""), placeholder="Enter full name") }}
+                            {% if form.name.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Age -->
+                        <div class="col-md-6">
+                            <label for="{{ form.age.id }}" class="form-label">
+                                <i class="bi bi-calendar text-muted me-2"></i>Age *
+                            </label>
+                            {{ form.age(class="form-control" + (" is-invalid" if form.age.errors else ""), placeholder="Enter age") }}
+                            {% if form.age.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.age.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Gender -->
+                        <div class="col-md-6">
+                            <label for="{{ form.gender.id }}" class="form-label">
+                                <i class="bi bi-gender-ambiguous text-muted me-2"></i>Gender *
+                            </label>
+                            {{ form.gender(class="form-select" + (" is-invalid" if form.gender.errors else "")) }}
+                            {% if form.gender.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.gender.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Blood Group -->
+                        <div class="col-md-6">
+                            <label for="{{ form.blood_group.id }}" class="form-label">
+                                <i class="bi bi-heart-pulse text-muted me-2"></i>Blood Group *
+                            </label>
+                            {{ form.blood_group(class="form-select" + (" is-invalid" if form.blood_group.errors else "")) }}
+                            {% if form.blood_group.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.blood_group.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Phone -->
+                        <div class="col-md-6">
+                            <label for="{{ form.phone.id }}" class="form-label">
+                                <i class="bi bi-telephone text-muted me-2"></i>Phone Number *
+                            </label>
+                            {{ form.phone(class="form-control" + (" is-invalid" if form.phone.errors else ""), placeholder="Enter phone number") }}
+                            {% if form.phone.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.phone.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Email -->
+                        <div class="col-md-6">
+                            <label for="{{ form.email.id }}" class="form-label">
+                                <i class="bi bi-envelope text-muted me-2"></i>Email Address *
+                            </label>
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), placeholder="Enter email address") }}
+                            {% if form.email.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Last Donation Date -->
+                        <div class="col-md-6">
+                            <label for="{{ form.last_donation_date.id }}" class="form-label">
+                                <i class="bi bi-calendar-check text-muted me-2"></i>Last Donation Date
+                            </label>
+                            {{ form.last_donation_date(class="form-control" + (" is-invalid" if form.last_donation_date.errors else ""), type="date") }}
+                            {% if form.last_donation_date.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.last_donation_date.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Leave blank if first time donor</small>
+                        </div>
+                        
+                        <!-- Address -->
+                        <div class="col-12">
+                            <label for="{{ form.address.id }}" class="form-label">
+                                <i class="bi bi-geo-alt text-muted me-2"></i>Address *
+                            </label>
+                            {{ form.address(class="form-control" + (" is-invalid" if form.address.errors else ""), rows="3", placeholder="Enter complete address") }}
+                            {% if form.address.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.address.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('view_donors') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-circle me-2"></i>Update Donor
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Donor Summary -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-info-circle text-info me-2"></i>
+                    Donor Summary
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong>ID:</strong> 
+                            <span class="badge bg-secondary">{{ donor.donor_id }}</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>Created:</strong> 
+                            <small class="text-muted">{{ donor.created_at.strftime('%B %d, %Y at %I:%M %p') if donor.created_at else 'N/A' }}</small>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong>Status:</strong> 
+                            <span class="badge bg-success">Active</span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Total Donations:</strong> 
+                            <span class="badge bg-info">{{ donor.donations|length if donor.donations else 0 }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Auto-save draft functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Load saved draft
+    inputs.forEach(input => {
+        const saved = localStorage.getItem(`donor_edit_draft_${input.name}`);
+        if (saved && input.type !== 'submit' && input.type !== 'reset') {
+            input.value = saved;
+        }
+    });
+    
+    // Save draft on input change
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.type !== 'submit' && this.type !== 'reset') {
+                localStorage.setItem(`donor_edit_draft_${this.name}`, this.value);
+            }
+        });
+    });
+    
+    // Clear draft on successful submission
+    form.addEventListener('submit', function() {
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'reset') {
+                localStorage.removeItem(`donor_edit_draft_${input.name}`);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

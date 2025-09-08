@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+
+{% block title %}Add Blood Request - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-plus-circle text-warning me-2"></i>
+                    New Blood Request
+                </h1>
+                <p class="text-muted">Create a new blood request for a recipient</p>
+            </div>
+            <a href="{{ url_for('view_requests') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Requests
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clipboard-pulse text-secondary me-2"></i>
+                    Request Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-3">
+                        <!-- Recipient Selection -->
+                        <div class="col-md-6">
+                            <label for="{{ form.recipient_id.id }}" class="form-label">
+                                <i class="bi bi-person-heart text-muted me-2"></i>Select Recipient *
+                            </label>
+                            {{ form.recipient_id(class="form-select" + (" is-invalid" if form.recipient_id.errors else "")) }}
+                            {% if form.recipient_id.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.recipient_id.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Choose from registered recipients</small>
+                        </div>
+                        
+                        <!-- Blood Group -->
+                        <div class="col-md-6">
+                            <label for="{{ form.blood_group.id }}" class="form-label">
+                                <i class="bi bi-heart-pulse text-muted me-2"></i>Blood Group *
+                            </label>
+                            {{ form.blood_group(class="form-select" + (" is-invalid" if form.blood_group.errors else "")) }}
+                            {% if form.blood_group.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.blood_group.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Quantity Needed -->
+                        <div class="col-md-6">
+                            <label for="{{ form.quantity_needed_ml.id }}" class="form-label">
+                                <i class="bi bi-droplet text-muted me-2"></i>Quantity Needed (ml) *
+                            </label>
+                            {{ form.quantity_needed_ml(class="form-control" + (" is-invalid" if form.quantity_needed_ml.errors else ""), placeholder="Enter quantity in ml") }}
+                            {% if form.quantity_needed_ml.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.quantity_needed_ml.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Standard unit is 450ml</small>
+                        </div>
+                        
+                        <!-- Priority Level -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="bi bi-exclamation-triangle text-muted me-2"></i>Priority Level
+                            </label>
+                            <select class="form-select" name="priority">
+                                <option value="Low">Low - Routine</option>
+                                <option value="Medium" selected>Medium - Standard</option>
+                                <option value="High">High - Urgent</option>
+                                <option value="Critical">Critical - Emergency</option>
+                            </select>
+                            <small class="form-text text-muted">Select urgency level</small>
+                        </div>
+                        
+                        <!-- Additional Notes -->
+                        <div class="col-12">
+                            <label class="form-label">
+                                <i class="bi bi-chat-text text-muted me-2"></i>Additional Notes
+                            </label>
+                            <textarea class="form-control" name="notes" rows="3" placeholder="Any additional information about the request..."></textarea>
+                            <small class="form-text text-muted">Optional: Include medical details, urgency reasons, etc.</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Reset Form
+                                </button>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-check-circle me-2"></i>Create Request
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Help Information -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-info-circle text-info me-2"></i>
+                    Important Notes
+                </h6>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="bi bi-check text-success me-2"></i>
+                        Recipient must be registered in the system first
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check text-success me-2"></i>
+                        Blood group should match recipient's requirements
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check text-success me-2"></i>
+                        Quantity should be realistic and within limits
+                    </li>
+                    <li class="mb-0">
+                        <i class="bi bi-check text-success me-2"></i>
+                        System will track request status automatically
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Blood Compatibility Guide -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-heart-pulse text-danger me-2"></i>
+                    Blood Compatibility Guide
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-danger">Universal Recipients</h6>
+                        <ul class="list-unstyled mb-3">
+                            <li><strong>AB+:</strong> Can receive from all blood types</li>
+                            <li><strong>AB-:</strong> Can receive from A-, B-, AB-, O-</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">Universal Donors</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li><strong>O+:</strong> Can donate to A+, B+, AB+, O+</li>
+                            <li><strong>O-:</strong> Can donate to all blood types</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Auto-save draft functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Load saved draft
+    inputs.forEach(input => {
+        const saved = localStorage.getItem(`request_draft_${input.name}`);
+        if (saved && input.type !== 'submit' && input.type !== 'reset') {
+            input.value = saved;
+        }
+    });
+    
+    // Save draft on input change
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.type !== 'submit' && this.type !== 'reset') {
+                localStorage.setItem(`request_draft_${this.name}`, this.value);
+            }
+        });
+    });
+    
+    // Clear draft on successful submission
+    form.addEventListener('submit', function() {
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'reset') {
+                localStorage.removeItem(`request_draft_${input.name}`);
+            }
+        });
+    });
+    
+    // Auto-fill blood group based on selected recipient
+    const recipientSelect = document.querySelector('select[name="recipient_id"]');
+    const bloodGroupSelect = document.querySelector('select[name="blood_group"]');
+    
+    if (recipientSelect && bloodGroupSelect) {
+        recipientSelect.addEventListener('change', function() {
+            // This would typically fetch recipient data via AJAX
+            // For now, we'll just show a message
+            if (this.value) {
+                console.log('Recipient selected, blood group should auto-fill');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

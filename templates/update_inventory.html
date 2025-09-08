@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+
+{% block title %}Update Inventory - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-pencil-square text-danger me-2"></i>
+                    Update Blood Inventory
+                </h1>
+                <p class="text-muted">Add or update blood units in the inventory</p>
+            </div>
+            <a href="{{ url_for('blood_inventory') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Inventory
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-heart-pulse text-secondary me-2"></i>
+                    Inventory Update
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    <div class="row g-3">
+                        <!-- Blood Group Selection -->
+                        <div class="col-md-6">
+                            <label for="blood_group" class="form-label">
+                                <i class="bi bi-heart-pulse text-muted me-2"></i>Blood Group *
+                            </label>
+                            <select name="blood_group" id="blood_group" class="form-select" required>
+                                <option value="">Select Blood Group</option>
+                                <option value="A+" {% if request.args.get('blood_group') == 'A+' %}selected{% endif %}>A+</option>
+                                <option value="A-" {% if request.args.get('blood_group') == 'A-' %}selected{% endif %}>A-</option>
+                                <option value="B+" {% if request.args.get('blood_group') == 'B+' %}selected{% endif %}>B+</option>
+                                <option value="B-" {% if request.args.get('blood_group') == 'B-' %}selected{% endif %}>B-</option>
+                                <option value="AB+" {% if request.args.get('blood_group') == 'AB+' %}selected{% endif %}>AB+</option>
+                                <option value="AB-" {% if request.args.get('blood_group') == 'AB-' %}selected{% endif %}>AB-</option>
+                                <option value="O+" {% if request.args.get('blood_group') == 'O+' %}selected{% endif %}>O+</option>
+                                <option value="O-" {% if request.args.get('blood_group') == 'O-' %}selected{% endif %}>O-</option>
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select a blood group.
+                            </div>
+                        </div>
+                        
+                        <!-- Units to Add/Remove -->
+                        <div class="col-md-6">
+                            <label for="units" class="form-label">
+                                <i class="bi bi-droplet text-muted me-2"></i>Units *
+                            </label>
+                            <input type="number" class="form-control" id="units" name="units" 
+                                   placeholder="Enter number of units" required min="-100" max="100">
+                            <div class="invalid-feedback">
+                                Please enter a valid number of units.
+                            </div>
+                            <small class="form-text text-muted">
+                                Use positive numbers to add, negative to remove
+                            </small>
+                        </div>
+                        
+                        <!-- Update Type -->
+                        <div class="col-md-6">
+                            <label class="form-label">
+                                <i class="bi bi-gear text-muted me-2"></i>Update Type
+                            </label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="update_type" id="add" value="add" checked>
+                                <label class="form-check-label" for="add">
+                                    <i class="bi bi-plus-circle text-success me-1"></i>Add Units
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="update_type" id="remove" value="remove">
+                                <label class="form-check-label" for="remove">
+                                    <i class="bi bi-dash-circle text-danger me-1"></i>Remove Units
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="update_type" id="set" value="set">
+                                <label class="form-check-label" for="set">
+                                    <i class="bi bi-arrow-right-circle text-primary me-1"></i>Set Exact Amount
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Reason for Update -->
+                        <div class="col-md-6">
+                            <label for="reason" class="form-label">
+                                <i class="bi bi-chat-text text-muted me-2"></i>Reason
+                            </label>
+                            <select name="reason" id="reason" class="form-select">
+                                <option value="">Select Reason</option>
+                                <option value="donation">New Donation</option>
+                                <option value="usage">Blood Usage</option>
+                                <option value="expiry">Expired Units</option>
+                                <option value="adjustment">Inventory Adjustment</option>
+                                <option value="testing">Testing/Quality Control</option>
+                                <option value="other">Other</option>
+                            </select>
+                            <small class="form-text text-muted">Optional: Track why inventory changed</small>
+                        </div>
+                        
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <label for="notes" class="form-label">
+                                <i class="bi bi-sticky text-muted me-2"></i>Additional Notes
+                            </label>
+                            <textarea class="form-control" id="notes" name="notes" rows="3" 
+                                      placeholder="Any additional information about this update..."></textarea>
+                            <small class="form-text text-muted">Optional: Include details about the update</small>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <button type="reset" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Reset Form
+                                </button>
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-check-circle me-2"></i>Update Inventory
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Help Information -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="bi bi-info-circle text-info me-2"></i>
+                    How to Update Inventory
+                </h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-success">Adding Units</h6>
+                        <ul class="list-unstyled mb-3">
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Select "Add Units" and enter positive number
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Use when new donations arrive
+                            </li>
+                            <li class="mb-0">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Example: +5 adds 5 units
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-danger">Removing Units</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Select "Remove Units" and enter positive number
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Use when blood is used or expired
+                            </li>
+                            <li class="mb-0">
+                                <i class="bi bi-check text-success me-2"></i>
+                                Example: 3 removes 3 units
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Current Inventory Status -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-graph-up text-primary me-2"></i>
+                    Current Inventory Status
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h4 class="text-success mb-1" id="currentUnits">-</h4>
+                        <small class="text-muted">Current Units</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-info mb-1" id="newUnits">-</h4>
+                        <small class="text-muted">After Update</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-warning mb-1" id="status">-</h4>
+                        <small class="text-muted">Status</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-primary mb-1" id="change">-</h4>
+                        <small class="text-muted">Change</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Dynamic inventory preview
+document.addEventListener('DOMContentLoaded', function() {
+    const bloodGroupSelect = document.getElementById('blood_group');
+    const unitsInput = document.getElementById('units');
+    const updateTypeRadios = document.querySelectorAll('input[name="update_type"]');
+    
+    function updatePreview() {
+        const bloodGroup = bloodGroupSelect.value;
+        const units = parseInt(unitsInput.value) || 0;
+        const updateType = document.querySelector('input[name="update_type"]:checked').value;
+        
+        if (bloodGroup && units !== 0) {
+            let newUnits = 0;
+            let change = 0;
+            
+            switch(updateType) {
+                case 'add':
+                    newUnits = units; // This would be current + units in real app
+                    change = `+${units}`;
+                    break;
+                case 'remove':
+                    newUnits = -units; // This would be current - units in real app
+                    change = `-${units}`;
+                    break;
+                case 'set':
+                    newUnits = units;
+                    change = `Set to ${units}`;
+                    break;
+            }
+            
+            // Update preview (in real app, you'd fetch current inventory)
+            document.getElementById('currentUnits').textContent = '50'; // Example
+            document.getElementById('newUnits').textContent = newUnits > 0 ? newUnits : '0';
+            document.getElementById('change').textContent = change;
+            
+            // Update status
+            let status = 'Good';
+            let statusClass = 'text-success';
+            if (newUnits < 10) {
+                status = 'Critical';
+                statusClass = 'text-danger';
+            } else if (newUnits < 20) {
+                status = 'Low';
+                statusClass = 'text-warning';
+            }
+            
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = status;
+            statusElement.className = `text-warning mb-1 ${statusClass}`;
+        }
+    }
+    
+    // Event listeners
+    bloodGroupSelect.addEventListener('change', updatePreview);
+    unitsInput.addEventListener('input', updatePreview);
+    updateTypeRadios.forEach(radio => {
+        radio.addEventListener('change', updatePreview);
+    });
+    
+    // Auto-save draft functionality
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Load saved draft
+    inputs.forEach(input => {
+        const saved = localStorage.getItem(`inventory_draft_${input.name}`);
+        if (saved && input.type !== 'submit' && input.type !== 'reset') {
+            input.value = saved;
+        }
+    });
+    
+    // Save draft on input change
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.type !== 'submit' && this.type !== 'reset') {
+                localStorage.setItem(`inventory_draft_${this.name}`, this.value);
+            }
+        });
+    });
+    
+    // Clear draft on successful submission
+    form.addEventListener('submit', function() {
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'reset') {
+                localStorage.removeItem(`inventory_draft_${input.name}`);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}Blood Inventory - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-heart-pulse text-danger me-2"></i>
+                    Blood Inventory
+                </h1>
+                <p class="text-muted">Monitor blood stock levels and availability</p>
+            </div>
+            <a href="{{ url_for('update_inventory') }}" class="btn btn-danger">
+                <i class="bi bi-plus-circle me-2"></i>Update Inventory
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Overview -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-graph-up text-secondary me-2"></i>
+                    Inventory Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if inventory %}
+                <div class="row">
+                    {% for blood_type in inventory %}
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-3">
+                        <div class="text-center p-4 border rounded h-100 {% if blood_type.total_units < 10 %}border-danger{% elif blood_type.total_units < 20 %}border-warning{% else %}border-success{% endif %}">
+                            <div class="mb-3">
+                                {% if blood_type.total_units < 10 %}
+                                    <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+                                {% elif blood_type.total_units < 20 %}
+                                    <i class="bi bi-exclamation-circle text-warning fs-1"></i>
+                                {% else %}
+                                    <i class="bi bi-check-circle text-success fs-1"></i>
+                                {% endif %}
+                            </div>
+                            <h3 class="mb-2 {% if blood_type.total_units < 10 %}text-danger{% elif blood_type.total_units < 20 %}text-warning{% else %}text-success{% endif %}">
+                                {{ blood_type.total_units }}
+                            </h3>
+                            <h6 class="text-muted mb-2">{{ blood_type.blood_group }}</h6>
+                            <small class="text-muted">units available</small>
+                            
+                            <!-- Status Indicator -->
+                            <div class="mt-2">
+                                {% if blood_type.total_units < 10 %}
+                                    <span class="badge bg-danger">Critical</span>
+                                {% elif blood_type.total_units < 20 %}
+                                    <span class="badge bg-warning">Low</span>
+                                {% else %}
+                                    <span class="badge bg-success">Good</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox text-muted fs-1"></i>
+                    <h5 class="text-muted mt-3">No inventory data available</h5>
+                    <p class="text-muted">Start by updating the blood inventory</p>
+                    <a href="{{ url_for('update_inventory') }}" class="btn btn-danger">
+                        <i class="bi bi-plus-circle me-2"></i>Add Inventory
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Statistics -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <h4 class="text-primary mb-1">{{ inventory|length if inventory else 0 }}</h4>
+                        <small class="text-muted">Blood Types</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-success mb-1">
+                            {% if inventory %}
+                                {{ inventory|selectattr('total_units', '>=', 20)|list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h4>
+                        <small class="text-muted">Good Stock</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-warning mb-1">
+                            {% if inventory %}
+                                {{ inventory|selectattr('total_units', '>=', 10)|selectattr('total_units', '<', 20)|list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h4>
+                        <small class="text-muted">Low Stock</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="text-danger mb-1">
+                            {% if inventory %}
+                                {{ inventory|selectattr('total_units', '<', 10)|list|length }}
+                            {% else %}
+                                0
+                            {% endif %}
+                        </h4>
+                        <small class="text-muted">Critical</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Inventory Table -->
+{% if inventory %}
+<div class="row">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-table text-secondary me-2"></i>
+                    Detailed Inventory
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="border-0">Blood Group</th>
+                                <th class="border-0">Units Available</th>
+                                <th class="border-0">Status</th>
+                                <th class="border-0">Last Updated</th>
+                                <th class="border-0">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for blood_type in inventory %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-danger bg-opacity-10 rounded-circle p-2 me-3">
+                                            <i class="bi bi-heart-pulse text-danger"></i>
+                                        </div>
+                                        <strong>{{ blood_type.blood_group }}</strong>
+                                    </div>
+                                </td>
+                                <td>
+                                    <h5 class="mb-0 {% if blood_type.total_units < 10 %}text-danger{% elif blood_type.total_units < 20 %}text-warning{% else %}text-success{% endif %}">
+                                        {{ blood_type.total_units }}
+                                    </h5>
+                                    <small class="text-muted">units</small>
+                                </td>
+                                <td>
+                                    {% if blood_type.total_units < 10 %}
+                                        <span class="badge bg-danger">Critical</span>
+                                    {% elif blood_type.total_units < 20 %}
+                                        <span class="badge bg-warning">Low</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Good</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if blood_type.last_updated %}
+                                    <small class="text-muted">{{ blood_type.last_updated.strftime('%b %d, %Y at %I:%M %p') }}</small>
+                                    {% else %}
+                                    <small class="text-muted">Never</small>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('update_inventory') }}?blood_group={{ blood_type.blood_group }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil me-1"></i>Update
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Quick Actions -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning text-warning me-2"></i>
+                    Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <a href="{{ url_for('update_inventory') }}" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-plus-circle me-2"></i>Add Blood Units
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="{{ url_for('view_donations') }}" class="btn btn-outline-info w-100">
+                            <i class="bi bi-gift me-2"></i>View Donations
+                        </a>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <a href="{{ url_for('view_requests') }}" class="btn btn-outline-warning w-100">
+                            <i class="bi bi-clipboard-pulse me-2"></i>View Requests
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

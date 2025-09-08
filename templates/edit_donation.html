@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Donation - Blood Donation Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Page Header -->
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h2 mb-0">
+                    <i class="bi bi-pencil-square text-info me-2"></i>
+                    Edit Donation
+                </h1>
+                <p class="text-muted">Update donation information</p>
+            </div>
+            <a href="{{ url_for('view_donations') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Donations
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-transparent border-0">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-gift text-secondary me-2"></i>
+                    Donation Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="needs-validation" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row g-3">
+                        <!-- Donor Selection -->
+                        <div class="col-md-6">
+                            <label for="{{ form.donor_id.id }}" class="form-label">
+                                <i class="bi bi-person text-muted me-2"></i>Select Donor *
+                            </label>
+                            {{ form.donor_id(class="form-select" + (" is-invalid" if form.donor_id.errors else "")) }}
+                            {% if form.donor_id.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.donor_id.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Choose from registered donors</small>
+                        </div>
+                        
+                        <!-- Donation Date -->
+                        <div class="col-md-6">
+                            <label for="{{ form.donation_date.id }}" class="form-label">
+                                <i class="bi bi-calendar text-muted me-2"></i>Donation Date *
+                            </label>
+                            {{ form.donation_date(class="form-control" + (" is-invalid" if form.donation_date.errors else ""), type="date") }}
+                            {% if form.donation_date.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.donation_date.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Blood Volume -->
+                        <div class="col-md-6">
+                            <label for="{{ form.blood_volume_ml.id }}" class="form-label">
+                                <i class="bi bi-droplet text-muted me-2"></i>Blood Volume (ml) *
+                            </label>
+                            {{ form.blood_volume_ml(class="form-control" + (" is-invalid" if form.blood_volume_ml.errors else ""), placeholder="Enter volume in ml") }}
+                            {% if form.blood_volume_ml.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.blood_volume_ml.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Standard donation is 450ml</small>
+                        </div>
+                        
+                        <!-- Hospital -->
+                        <div class="col-md-6">
+                            <label for="{{ form.hospital.id }}" class="form-label">
+                                <i class="bi bi-building text-muted me-2"></i>Hospital/Clinic *
+                            </label>
+                            {{ form.hospital(class="form-control" + (" is-invalid" if form.hospital.errors else ""), placeholder="Enter hospital name") }}
+                            {% if form.hospital.errors %}
+                            <div class="invalid-feedback">
+                                {% for error in form.hospital.errors %}
+                                {{ error }}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Form Actions -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('view_donations') }}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                                <button type="submit" class="btn btn-info">
+                                    <i class="bi bi-check-circle me-2"></i>Update Donation
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Donation Summary -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-info-circle text-info me-2"></i>
+                    Donation Summary
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong>ID:</strong> 
+                            <span class="badge bg-secondary">{{ donation.donation_id }}</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>Created:</strong> 
+                            <small class="text-muted">{{ donation.created_at.strftime('%B %d, %Y at %I:%M %p') if donation.created_at else 'N/A' }}</small>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <strong>Status:</strong> 
+                            <span class="badge bg-success">Active</span>
+                        </p>
+                        <p class="mb-0">
+                            <strong>Donor:</strong> 
+                            <span class="badge bg-primary">{{ donation.donor.name if donation.donor else 'Unknown' }}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Impact Information -->
+        <div class="card border-0 shadow-sm mt-4">
+            <div class="card-header bg-transparent border-0">
+                <h6 class="card-title mb-0">
+                    <i class="bi bi-heart-pulse text-danger me-2"></i>
+                    Blood Impact
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="bg-danger bg-opacity-10 rounded p-3">
+                            <h4 class="text-danger mb-1">{{ donation.blood_volume_ml // 450 }}</h4>
+                            <small class="text-muted">Units Available</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-success bg-opacity-10 rounded p-3">
+                            <h4 class="text-success mb-1">{{ donation.blood_volume_ml }}</h4>
+                            <small class="text-muted">Total ml</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="bg-info bg-opacity-10 rounded p-3">
+                            <h4 class="text-info mb-1">{{ donation.blood_volume_ml // 50 }}</h4>
+                            <small class="text-muted">Lives Saved</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Auto-save draft functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    // Load saved draft
+    inputs.forEach(input => {
+        const saved = localStorage.getItem(`donation_edit_draft_${input.name}`);
+        if (saved && input.type !== 'submit' && input.type !== 'reset') {
+            input.value = saved;
+        }
+    });
+    
+    // Save draft on input change
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            if (this.type !== 'submit' && this.type !== 'reset') {
+                localStorage.setItem(`donation_edit_draft_${this.name}`, this.value);
+            }
+        });
+    });
+    
+    // Clear draft on successful submission
+    form.addEventListener('submit', function() {
+        inputs.forEach(input => {
+            if (input.type !== 'submit' && input.type !== 'reset') {
+                localStorage.removeItem(`donation_edit_draft_${input.name}`);
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
