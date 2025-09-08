@@ -2,7 +2,7 @@
 
 A comprehensive, production-ready web application for managing blood donation operations, built with modern Flask best practices and professional-grade security features.
 
-![Home page ss](<Home page ss>)
+![Home page ss](<Home page ss.png>)
 
 ## ✨ Features
 
